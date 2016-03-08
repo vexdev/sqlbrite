@@ -24,6 +24,8 @@ import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
 import com.squareup.sqlbrite.BriteDatabase.Transaction;
 import com.squareup.sqlbrite.TestDb.Employee;
+import com.squareup.sqlbrite.wrapper.android.SQLiteOpenHelperWrapper;
+
 import java.io.Closeable;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -74,7 +76,7 @@ public final class BriteDatabaseTest {
         logs.add(message);
       }
     };
-    db = new BriteDatabase(helper, logger, scheduler);
+    db = new BriteDatabase(new SQLiteOpenHelperWrapper(helper), logger, scheduler);
   }
 
   @After public void tearDown() {

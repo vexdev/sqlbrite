@@ -15,14 +15,18 @@
  */
 package com.squareup.sqlbrite;
 
+import com.squareup.sqlbrite.wrapper.SQLiteOpenHelper;
+import com.squareup.sqlbrite.wrapper.android.SQLiteOpenHelperWrapper;
+
 import android.content.ContentResolver;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteOpenHelper;
 import android.support.annotation.CheckResult;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
+
 import java.util.List;
+
 import rx.Observable;
 import rx.Observable.Operator;
 import rx.Scheduler;
@@ -65,9 +69,30 @@ public final class SqlBrite {
    * @param scheduler The {@link Scheduler} on which items from {@link BriteDatabase#createQuery}
    * will be emitted.
    */
-  @CheckResult @NonNull public BriteDatabase wrapDatabaseHelper(@NonNull SQLiteOpenHelper helper,
+  @CheckResult @NonNull public BriteDatabase wrapDatabaseHelper(
+      @NonNull android.database.sqlite.SQLiteOpenHelper helper,
       @NonNull Scheduler scheduler) {
-    return new BriteDatabase(helper, logger, scheduler);
+    return new BriteDatabase(new SQLiteOpenHelperWrapper(helper), logger, scheduler);
+  }
+
+  /**
+   * Wrap a {@link SQLiteOpenHelper} for observable queries using databases encrypted with SqlCipher.
+   * <p>
+   * While not strictly required, instances of this class assume that they will be the only ones
+   * interacting with the underlying {@link SQLiteOpenHelper} and it is required for automatic
+   * notifications of table changes to work. See {@linkplain BriteDatabase#createQuery the
+   * <code>query</code> method} for more information on that behavior.
+   *
+   * @param scheduler The {@link Scheduler} on which items from {@link BriteDatabase#createQuery}
+   * will be emitted.
+   * @param password The password to be used for encryption
+   */
+  @CheckResult @NonNull public BriteDatabase wrapDatabaseHelper(
+      @NonNull net.sqlcipher.database.SQLiteOpenHelper helper,
+      @NonNull Scheduler scheduler, @NonNull String password) {
+    return new BriteDatabase(
+            new com.squareup.sqlbrite.wrapper.sqlcipher.SQLiteOpenHelperWrapper(helper),
+            logger, scheduler, password);
   }
 
   /**
