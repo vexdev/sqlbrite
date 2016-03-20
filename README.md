@@ -1,5 +1,7 @@
-SQLBrite
+SQLCipherBrite
 ========
+
+A fork of [SQLBrite][sqlbrite] to be used with SQLCipher.
 
 A lightweight wrapper around `SQLiteOpenHelper` and `ContentResolver` which introduces reactive
 stream semantics to queries.
@@ -178,3 +180,4 @@ License
 
  [snap]: https://oss.sonatype.org/content/repositories/snapshots/
  [sqldelight]: https://github.com/square/sqldelight/
+ [sqlbrite]: https://github.com/square/sqlbrite

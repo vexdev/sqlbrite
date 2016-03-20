@@ -15,16 +15,19 @@
  */
 package com.squareup.sqlbrite;
 
+import com.squareup.sqlbrite.SqlBrite.Query;
+
+import net.sqlcipher.database.SQLiteDatabase;
+import net.sqlcipher.database.SQLiteOpenHelper;
+import net.sqlcipher.database.SQLiteTransactionListener;
+
 import android.content.ContentValues;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
-import android.database.sqlite.SQLiteTransactionListener;
 import android.support.annotation.CheckResult;
 import android.support.annotation.IntDef;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import com.squareup.sqlbrite.SqlBrite.Query;
+
 import java.io.Closeable;
 import java.lang.annotation.Retention;
 import java.util.Arrays;
@@ -32,6 +35,7 @@ import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
+
 import rx.Observable;
 import rx.Scheduler;
 import rx.functions.Action0;
@@ -99,16 +103,19 @@ public final class BriteDatabase implements Closeable {
   private volatile SQLiteDatabase readableDatabase;
   private volatile SQLiteDatabase writeableDatabase;
   private final Object databaseLock = new Object();
+  private final String password;
 
   private final Scheduler scheduler;
 
   // Package-private to avoid synthetic accessor method for 'transaction' instance.
   volatile boolean logging;
 
-  BriteDatabase(SQLiteOpenHelper helper, SqlBrite.Logger logger, Scheduler scheduler) {
+  BriteDatabase(SQLiteOpenHelper helper, SqlBrite.Logger logger, Scheduler scheduler,
+      String password) {
     this.helper = helper;
     this.logger = logger;
     this.scheduler = scheduler;
+    this.password = password;
   }
 
   /**
@@ -125,7 +132,7 @@ public final class BriteDatabase implements Closeable {
         db = readableDatabase;
         if (db == null) {
           if (logging) log("Creating readable database");
-          db = readableDatabase = helper.getReadableDatabase();
+          db = readableDatabase = helper.getReadableDatabase(this.password);
         }
       }
     }
@@ -140,7 +147,7 @@ public final class BriteDatabase implements Closeable {
         db = writeableDatabase;
         if (db == null) {
           if (logging) log("Creating writeable database");
-          db = writeableDatabase = helper.getWritableDatabase();
+          db = writeableDatabase = helper.getWritableDatabase(this.password);
         }
       }
     }

@@ -10,6 +10,7 @@ apply from: rootProject.file('gradle/android-findbugs.gradle')
 dependencies {
   compile rootProject.ext.rxJava
   compile rootProject.ext.supportAnnotations
+  compile rootProject.ext.sqlCipher
 
   androidTestCompile rootProject.ext.supportTestRunner
   androidTestCompile(rootProject.ext.truth) {

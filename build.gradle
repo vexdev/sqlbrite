@@ -35,6 +35,7 @@ ext {
   truth = 'com.google.truth:truth:0.27'
   findbugsJsr305 = 'com.google.code.findbugs:jsr305:3.0.0'
   findbugsAnnotations = 'com.google.code.findbugs:annotations:3.0.0'
+  sqlCipher = 'net.zetetic:android-database-sqlcipher:3.3.1-2'
 }
 
 configurations {

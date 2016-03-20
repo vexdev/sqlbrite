@@ -15,19 +15,24 @@
  */
 package com.example.sqlbrite.todo.db;
 
-import android.app.Application;
-import android.database.sqlite.SQLiteOpenHelper;
 import com.squareup.sqlbrite.BriteDatabase;
 import com.squareup.sqlbrite.SqlBrite;
+
+import net.sqlcipher.database.SQLiteOpenHelper;
+
+import android.app.Application;
+
+import javax.inject.Singleton;
+
 import dagger.Module;
 import dagger.Provides;
-import javax.inject.Singleton;
 import rx.schedulers.Schedulers;
 import timber.log.Timber;
 
 @Module(complete = false, library = true)
 public final class DbModule {
-  @Provides @Singleton SQLiteOpenHelper provideOpenHelper(Application application) {
+  @Provides @Singleton
+  SQLiteOpenHelper provideOpenHelper(Application application) {
     return new DbOpenHelper(application);
   }
 
@@ -40,7 +45,7 @@ public final class DbModule {
   }
 
   @Provides @Singleton BriteDatabase provideDatabase(SqlBrite sqlBrite, SQLiteOpenHelper helper) {
-    BriteDatabase db = sqlBrite.wrapDatabaseHelper(helper, Schedulers.io());
+    BriteDatabase db = sqlBrite.wrapDatabaseHelper(helper, Schedulers.io(), "password");
     db.setLoggingEnabled(true);
     return db;
   }

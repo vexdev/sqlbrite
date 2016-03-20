@@ -15,14 +15,17 @@
  */
 package com.squareup.sqlbrite;
 
+import net.sqlcipher.database.SQLiteOpenHelper;
+
 import android.content.ContentResolver;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteOpenHelper;
 import android.support.annotation.CheckResult;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
+
 import java.util.List;
+
 import rx.Observable;
 import rx.Observable.Operator;
 import rx.Scheduler;
@@ -55,7 +58,7 @@ public final class SqlBrite {
   }
 
   /**
-   * Wrap a {@link SQLiteOpenHelper} for observable queries.
+   * Wrap a {@link SQLiteOpenHelper} for observable queries on databases encrypted with SqlCipher.
    * <p>
    * While not strictly required, instances of this class assume that they will be the only ones
    * interacting with the underlying {@link SQLiteOpenHelper} and it is required for automatic
@@ -64,10 +67,11 @@ public final class SqlBrite {
    *
    * @param scheduler The {@link Scheduler} on which items from {@link BriteDatabase#createQuery}
    * will be emitted.
+   * @param password The password to be used for encryption
    */
   @CheckResult @NonNull public BriteDatabase wrapDatabaseHelper(@NonNull SQLiteOpenHelper helper,
-      @NonNull Scheduler scheduler) {
-    return new BriteDatabase(helper, logger, scheduler);
+      @NonNull Scheduler scheduler, @NonNull String password) {
+    return new BriteDatabase(helper, logger, scheduler, password);
   }
 
   /**
